@@ -17,6 +17,10 @@
         {
             echo "<div class='error'>Une erreur est survenue (code erreur: ".$_GET['error'].")</div>";
         }
+        if(isset($_GET['upload']) && $_GET['upload']=="success")
+        {
+            echo "<div class='success'>Votre produit a bien été ajouté</div>";
+        }
     ?>
     <form action="treatment.php" method="POST" enctype="multipart/form-data">
         <div class="form-group">
