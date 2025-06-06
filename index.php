@@ -1,6 +1,25 @@
 <?php
     // include("connexiongdf.php");
     require "connexion.php";
+
+    if(isset($_GET['delete']) && is_numeric($_GET['delete']))
+    {
+        $id = htmlspecialchars($_GET['delete']);
+        $verif = $bdd->prepare("SELECT * FROM products WHERE id=?");
+        $verif->execute([$id]);
+        if(!$donV = $verif->fetch())
+        {
+            header("LOCATION:index.php");
+            exit();
+        }
+
+        unlink("images/".$donV['cover']);
+
+        $delete = $bdd->prepare("DELETE FROM products WHERE id=?");
+        $delete->execute([$id]);
+        header("LOCATION:index.php?successDel=".$id);
+
+    }
 ?>
 
 <!DOCTYPE html>
@@ -22,6 +41,15 @@
         {
             echo "<div class='success'>Votre produit a bien été ajouté</div>";
         }
+        if(isset($_GET['update']))
+        {
+            echo "<div class='update'>Vous avez bien modifié le produit n°".$_GET['update']."</div>";
+        }
+        if(isset($_GET['successDel']))
+        {
+            echo "<div class='delete'>Vous avez bien supprimé le produit n°".$_GET['successDel']."</div>";
+        }
+
     ?>
     <form action="treatment.php" method="POST" enctype="multipart/form-data">
         <div class="form-group">
