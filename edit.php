@@ -38,7 +38,7 @@
             echo "<div class='success'>Votre produit a bien été ajouté</div>";
         }
     ?>
-    <form action="treatment.php" method="POST" enctype="multipart/form-data">
+    <form action="treatmentUpdate.php?id=<?= $don['id'] ?>" method="POST" enctype="multipart/form-data">
         <div class="form-group">
             <label for="nom">nom: </label>
             <input type="text" name="nom" id="nom" value="<?= $don['nom'] ?>">
@@ -48,11 +48,14 @@
             <textarea name="description" id="description"><?= $don['description'] ?></textarea>
         </div>
         <div class="form-group">
+            <div>
+                <img src="images/<?= $don['cover'] ?>" alt="image de <?= $don['nom'] ?>">
+            </div>
             <input type="hidden" name="MAX_FILE_SIZE" value="20000000">
             <label for="image">Image: </label>
             <input type="file" name="image" id="image">
         </div>
-        <input type="submit" value="Envoyer">
+        <input type="submit" value="Modifier">
     </form>
 </body>
 </html>
