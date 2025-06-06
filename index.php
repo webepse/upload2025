@@ -18,7 +18,7 @@
         $delete = $bdd->prepare("DELETE FROM products WHERE id=?");
         $delete->execute([$id]);
         header("LOCATION:index.php?successDel=".$id);
-
+        exit();
     }
 ?>
 
