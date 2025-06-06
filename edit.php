@@ -1,6 +1,21 @@
 <?php
-    // include("connexiongdf.php");
+    // vérif si id est présent dans l'url et s'il est numérique
+    if(!isset($_GET['id']) || !is_numeric($_GET['id']))
+    {
+        header("LOCATION:index.php");
+        exit();
+    }
+    $id = htmlspecialchars($_GET['id']);
     require "connexion.php";
+    $req = $bdd->prepare("SELECT * FROM products WHERE id=?");
+    $req->execute([$id]);
+    if(!$don=$req->fetch(PDO::FETCH_ASSOC))
+    {
+        header("LOCATION:index.php");
+        exit();
+    }
+
+
 ?>
 
 <!DOCTYPE html>
@@ -12,7 +27,7 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Formulaire upload</h1>
+    <h1>Formulaire édition</h1>
     <?php
         if(isset($_GET['error']))
         {
@@ -26,11 +41,11 @@
     <form action="treatment.php" method="POST" enctype="multipart/form-data">
         <div class="form-group">
             <label for="nom">nom: </label>
-            <input type="text" name="nom" id="nom">
+            <input type="text" name="nom" id="nom" value="<?= $don['nom'] ?>">
         </div>
         <div class="form-group">
             <label for="description">Description: </label>
-            <textarea name="description" id="description"></textarea>
+            <textarea name="description" id="description"><?= $don['description'] ?></textarea>
         </div>
         <div class="form-group">
             <input type="hidden" name="MAX_FILE_SIZE" value="20000000">
@@ -39,29 +54,5 @@
         </div>
         <input type="submit" value="Envoyer">
     </form>
-
-    <?php
-        $req = $bdd->query("SELECT * FROM products");
-        // $don = $req->fetch();
-        // var_dump($don);
-        // $don2 = $req->fetch();
-        // var_dump($don2);
-        // $don3 = $req->fetch();
-        // var_dump($don3);
-        // while($don = $req->fetch(PDO::FETCH_ASSOC))
-        // {
-        //     var_dump($don);
-        // }
-        $dons =$req->fetchAll(PDO::FETCH_ASSOC);
-
-        foreach($dons as $don)
-        {
-            echo "<div>";
-                echo "<a href='edit.php?id=".$don['id']."'>".$don['nom']."</a>";
-                echo "<img src='images/".$don['cover']."' alt='image de ".$don['nom']."'>";
-            echo "</div>";
-        }
-        $req->closeCursor();
-    ?>
 </body>
 </html>
