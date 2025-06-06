@@ -1,6 +1,6 @@
 <?php
     // include("connexiongdf.php");
-    // require "connexion.php";
+    require "connexion.php";
 ?>
 
 <!DOCTYPE html>
@@ -38,5 +38,26 @@
         </div>
         <input type="submit" value="Envoyer">
     </form>
+
+    <?php
+        $req = $bdd->query("SELECT * FROM products");
+        // $don = $req->fetch();
+        // var_dump($don);
+        // $don2 = $req->fetch();
+        // var_dump($don2);
+        // $don3 = $req->fetch();
+        // var_dump($don3);
+        // while($don = $req->fetch(PDO::FETCH_ASSOC))
+        // {
+        //     var_dump($don);
+        // }
+        $dons =$req->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach($dons as $iteration)
+        {
+            echo "<div>".$iteration['nom']."</div>";
+        }
+        $req->closeCursor();
+    ?>
 </body>
 </html>

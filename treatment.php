@@ -6,6 +6,7 @@
 
 // var_dump($_COOKIE);
 
+// tester si les infos sont envoyée
 if(isset($_POST['nom']))
 {
     // technique init error
@@ -16,6 +17,16 @@ if(isset($_POST['nom']))
         $err = 1;
     }else{
         $nom = htmlspecialchars($_POST['nom']);
+        // vérifier si nom existe
+         require "connexion.php";
+         $req = $bdd->prepare("SELECT * FROM products WHERE nom=?");
+         $req->execute([$nom]);
+         $don = $req->fetch();
+         if($don)
+         {
+            $err=3;
+         }
+         $req->closeCursor();
     }
 
     if(empty($_POST['description']))
@@ -25,10 +36,13 @@ if(isset($_POST['nom']))
         $description = htmlspecialchars($_POST['description']);
     }
 
+    // vérifier s'il y a eu une erreur?
     if($err == 0)
     {
+        // vérifier s'il y a une image
         if(isset($_FILES['image']))
         {
+            // vérifier si l'image n'a pas d'erreur de transfert
             if($_FILES['image']['error']==0)
             {
                 // gestion du fichier
@@ -55,7 +69,7 @@ if(isset($_POST['nom']))
                 {
                     $err= "i7";
                 }
-               
+                // revérif de $err mais cette fois-ci avec l'image
                 if($err==0)
                 {
                     //On formate le nom du fichier, strtr remplace tous les KK spéciaux en normaux suivant notre liste
@@ -72,7 +86,7 @@ if(isset($_POST['nom']))
                     if(move_uploaded_file($_FILES['image']['tmp_name'],$dossier.$fichiercplt))
                     {
                         // insertion dans la bdd
-                        require "connexion.php";
+                       
                         $insert = $bdd->prepare("INSERT INTO products(nom,description,cover) VALUES(:nom,:descri,:cover)");
                         $insert->execute([
                             ":nom" => $nom,
@@ -87,18 +101,21 @@ if(isset($_POST['nom']))
                     }
                    
                 }else{
+                    // problème avec les tests sur l'image
                     header("LOCATION:index.php?error=".$err);
                     exit();
                 }
                 
                 
             }else{
+                // si une erreur au niveau du transfert 
                 header("LOCATION:index.php?error=i".$_FILES['image']['error']);
                 exit();
             }
 
 
         }else{
+            // si pas d'image
             header("LOCATION:index.php?error=3");
             exit();
         }
@@ -106,11 +123,13 @@ if(isset($_POST['nom']))
 
 
     }else{
+        // redirection vers index avec en supplément l'indication de l'erreur (GET)
         header("LOCATION:index.php?error=".$err);
         exit();
     }
 
 }else{
+    // les informations ne sont pas envoyées donc redirection
     header("LOCATION:index.php");
     exit();
 }
