@@ -58,6 +58,7 @@
         {
             echo "<div>";
                 echo "<a href='edit.php?id=".$don['id']."'>".$don['nom']."</a>";
+                echo "<a href='index.php?delete=".$don['id']."'>Supprimer</a>";
                 echo "<img src='images/".$don['cover']."' alt='image de ".$don['nom']."'>";
             echo "</div>";
         }

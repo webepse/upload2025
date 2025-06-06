@@ -95,31 +95,34 @@ if(isset($_POST['nom']))
                     // move_uploaded_file(c:/wamp64/tmp/tmpkjfdklsfjkldsf.tmp, images/6156156156image-cree.jpg)
                     if(move_uploaded_file($_FILES['image']['tmp_name'],$dossier.$fichiercplt))
                     {
+                        // supprimer l'ancienne image
+                        unlink("images/".$don['cover']);
+
                         // insertion dans la bdd
-                       
-                        $insert = $bdd->prepare("INSERT INTO products(nom,description,cover) VALUES(:nom,:descri,:cover)");
-                        $insert->execute([
+                        $update = $bdd->prepare("UPDATE products SET nom=:nom, description=:descri, cover=:cover WHERE id=:myid");
+                        $update->execute([
                             ":nom" => $nom,
                             ":descri" => $description,
-                            ":cover" => $fichiercplt
+                            ":cover" => $fichiercplt,
+                            ":myid" => $id
                         ]);
-                        header("LOCATION:index.php?upload=success");
+                        header("LOCATION:index.php?update=".$id);
                         exit();
                     }else{
-                        header("LOCATION:index.php?error=i8");
+                        header("LOCATION:edit.php?id=".$id."&error=i8");
                         exit();
                     }
                    
                 }else{
                     // problème avec les tests sur l'image
-                    header("LOCATION:index.php?error=".$err);
+                    header("LOCATION:edit.php?id=".$id."&error=".$err);
                     exit();
                 }
                 
                 
             }else{
                 // si une erreur au niveau du transfert 
-                header("LOCATION:index.php?error=i".$_FILES['image']['error']);
+                header("LOCATION:edit.php?id=".$id."&error=i".$_FILES['image']['error']);
                 exit();
             }
 
@@ -140,7 +143,7 @@ if(isset($_POST['nom']))
 
     }else{
         // redirection vers index avec en supplément l'indication de l'erreur (GET)
-        header("LOCATION:index.php?error=".$err);
+        header("LOCATION:edit.php?id=".$id."&error=".$err);
         exit();
     }
 
